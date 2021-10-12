@@ -3,6 +3,7 @@ using Domain.Interfaces.Services;
 using Domain.Models;
 using Domain.Repositories;
 using Domain.ViewModels;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,14 +66,37 @@ namespace Persistence.Services
 
         }
 
-        public Task<AuthorsResponseModel> GetAuthors()
+        public async Task<AuthorsResponseModel> GetAuthors()
         {
-            throw new NotImplementedException();
+            var authors = await _authorRepository.Query().Select(a => new AuthorDTO
+            {
+                Id = a.Id,
+                FirstName = a.FirstName,
+                LastName = a.LastName,
+                Biography = a.Biography
+            }).ToListAsync();
+
+            return new AuthorsResponseModel
+            {
+                Data = authors,
+                Status = true,
+                Message = "Authors successfully retrieved"
+            };
+
         }
 
-        public Task<BaseResponse> UpdateAuthor(int id, UpdateAuthorRequestModel model)
+        public async Task<BaseResponse> UpdateAuthor(int id, UpdateAuthorRequestModel model)
         {
-            throw new NotImplementedException();
+            var author = await _authorRepository.GetAsync(id);
+            author.Biography = model.Biography;
+            await  _authorRepository.UpdateAsync(author);
+            await _authorRepository.SaveChangesAsync();
+            return new BaseResponse
+            {
+                Status = true,
+                Message = "Author successfully updated"
+            };
+            
         }
     }
 }
