@@ -1,4 +1,4 @@
-﻿
+﻿using Domain.DTOs;
 using Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -6,11 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.DTOs
+namespace Domain.ViewModels
 {
-    public class UserDTO
+    public class CreateUserRequestModel
     {
-        public int Id { get; set; }
 
         public string FirstName { get; set; }
 
@@ -31,15 +30,30 @@ namespace Domain.DTOs
 
         public AccountStatus Status { get; set; }
 
-        public string PasswordHash { get; set; }
+        public string Password { get; set; }
 
         public string HashSalt { get; set; }
 
-        // public string HashSalt { get; set; }
-
         public UserType UserType { get; set; }
-
     }
 
-    
+    public class UpgradeLibraryUserRequestModel
+    {
+        public UserType UserType { get; set; }
+    }
+
+    public class UpdateUserStatusRequestModel
+    {
+        public AccountStatus Status { get; set; }
+    }
+
+    public class UserResponseModel : BaseResponse
+    {
+        public UserDTO Data { get; set; }
+    }
+
+    public class UsersResponseModel : BaseResponse
+    {
+        public IEnumerable<BookDTO> Data { get; set; } = new List<BookDTO>();
+    }
 }

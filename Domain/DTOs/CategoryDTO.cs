@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.DTOs
 {
-    public class CategoryModel
+    public class CategoryDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -16,13 +16,5 @@ namespace Domain.DTOs
         public List<BookCategory> BookCategories { get; set; } = new List<BookCategory>();
     }
 
-    public class CreateCategoryRequestModel
-    {
-        public string Name { get; set; }
-    }
-
-    public class UpdateCategoryRequestModel
-    {
-        public string Name { get; set; }
-    }
+   
 }

@@ -1,4 +1,5 @@
 ﻿using Domain.DTOs;
+using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Models;
 using Domain.Repositories;
@@ -11,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Persistence.Services
-{
+{   
     public class AuthorService : IAuthorService
     {
         private readonly IAuthorRepository _authorRepository;
@@ -25,7 +26,6 @@ namespace Persistence.Services
         {
             var author = new Author
             {
-                
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Biography = model.Biography
@@ -47,7 +47,7 @@ namespace Persistence.Services
         public async Task<AuthorResponseModel> GetAuthor(int id)
         {
             var author = await _authorRepository.GetAsync(id);
-            /*if (author == null)
+            /*if (author == null) 
             {
                 throw new NotFoundException("Role does not exist");
             }*/

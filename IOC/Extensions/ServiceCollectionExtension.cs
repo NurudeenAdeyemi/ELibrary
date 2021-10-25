@@ -1,4 +1,5 @@
 ﻿
+using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -26,14 +27,18 @@ namespace IOC.Extensions
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddScoped<IAuthorService, AuthorService>();
-          ;
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IBookService, BookService>();
+
             return services;
         }
 
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            services.AddScoped<IAuthorRepository, AuthorRepository>()
-                ;
+            services.AddScoped<IAuthorRepository, AuthorRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IBookRepository, BookRepository>();
+
             return services;
         }
     }

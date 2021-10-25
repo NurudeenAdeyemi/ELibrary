@@ -1,6 +1,5 @@
 ﻿using Domain.Interfaces.Repositories;
 using Domain.Models;
-using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
 using System;
@@ -11,20 +10,16 @@ using System.Threading.Tasks;
 
 namespace Persistence.Repositories
 {
-    public class AuthorRepository : BaseRepository<Author>, IAuthorRepository
+    public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
     {
-        public AuthorRepository(LibraryContext context)
+
+        public CategoryRepository(LibraryContext context)
         {
             _context = context;
         }
-        public Task<Author> GetByAuthorNameAsync(string firstName)
+        public async Task<IEnumerable<Category>> GetSelectedCategories(IList<int> ids)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<IEnumerable<Author>> GetSelectedAuthors(IList<int> ids)
-        {
-            return await _context.Authors
+            return await _context.Categories
                 .Where(c => ids.Contains(c.Id)).ToListAsync();
         }
     }
