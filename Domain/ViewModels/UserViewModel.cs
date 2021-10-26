@@ -15,7 +15,6 @@ namespace Domain.ViewModels
 
         public string LastName { get; set; }
 
-
         public string Email { get; set; }
 
         public string PhoneNumber { get; set; }
@@ -35,6 +34,7 @@ namespace Domain.ViewModels
         public string HashSalt { get; set; }
 
         public UserType UserType { get; set; }
+        public IList<int> Roles { get; set; } = new List<int>();
     }
 
     public class UpgradeLibraryUserRequestModel
@@ -54,6 +54,6 @@ namespace Domain.ViewModels
 
     public class UsersResponseModel : BaseResponse
     {
-        public IEnumerable<BookDTO> Data { get; set; } = new List<BookDTO>();
+        public IEnumerable<UserDTO> Data { get; set; } = new List<UserDTO>();
     }
 }

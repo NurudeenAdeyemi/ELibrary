@@ -13,7 +13,6 @@ namespace Domain.Models
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
-
         
         public string Email { get; set; }
 
@@ -32,7 +31,6 @@ namespace Domain.Models
         public string PasswordHash { get; set; }
 
         public string HashSalt { get; set; }
-
 
         public UserType UserType { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿
 using Domain.Enums;
+using Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +39,7 @@ namespace Domain.DTOs
         // public string HashSalt { get; set; }
 
         public UserType UserType { get; set; }
+        public IEnumerable<RoleDTO> Roles { get; set; } = new List<RoleDTO>();
 
     }
 
