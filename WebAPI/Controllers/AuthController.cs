@@ -1,4 +1,5 @@
 ﻿using Domain.Interfaces.Identity;
+using Domain.Interfaces.Services;
 using Domain.Models;
 using Domain.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -23,35 +24,34 @@ namespace WebAPI.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IIdentityService _identityService;
         private readonly IConfiguration _configuration;
-        private readonly IMailSender _mailSender;
-        private readonly ILogger<AccountController> _logger;
+       // private readonly IMailSender _mailSender;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IUserService userService, IIdentityService identityService, IConfiguration configuration, UserManager<User> userManager, ILogger<AccountController> logger, IMailSender mailSender)
+        public AuthController(IUserService userService, IIdentityService identityService, IConfiguration configuration, UserManager<User> userManager, ILogger<AuthController> logger)
         {
             _userService = userService;
             _userManager = userManager;
             _identityService = identityService;
             _configuration = configuration;
             _logger = logger;
-            _mailSender = mailSender;
+            //_mailSender = mailSender;
         }
 
-        [Authorize(Roles = "")]
+     //   [Authorize(Roles = "")]
         [HttpPost("register")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(BaseResponse))]
+        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(BaseResponse))]
         //[ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(ValidationResultModel))]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized, Type = typeof(BaseResponse))]
-        public async Task<IActionResult> Register([FromBody] RegisterUserRequestModel model)
+        //[ProducesResponseType((int)HttpStatusCode.Unauthorized, Type = typeof(BaseResponse))]
+        public async Task<IActionResult> Register([FromBody] CreateUserRequestModel model)
         {
-            var companyId = Guid.Parse(_identityService.GetUserCompanyId());
-            var response = await _userService.CreateUserAsync(companyId, model);
-            //await _mailSender.SendWelcomeMail(model.Email, $"{model.FirstName} {model.LastName}");
+
+            var response = await _userService.AddUser(model);
             return Ok(response);
         }
 
         [HttpPost("token")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(LoginResponseModel))]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(ValidationResultModel))]
+        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(LoginResponseModel))]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(ValidationResultModel))]
         public async Task<IActionResult> Token([FromBody] LoginRequestModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
@@ -62,10 +62,6 @@ namespace WebAPI.Controllers
                 if (isValidPassword)
                 {
                     var roles = await _userManager.GetRolesAsync(user);
-                    var produces = await _userService.GetUserProducesAsync(user.Id);
-                    var companies = await _userService.GetUserCompaniesAsync(user.Id);
-                    var countries = await _userService.GetUserCountriesAsync(user.Id);
-                    var programmes = await _userService.GetUserProgrammesAsync(user.Id);
                     var token = _identityService.GenerateToken(user, roles);
                     var tokenResponse = new LoginResponseModel
                     {
@@ -75,13 +71,9 @@ namespace WebAPI.Controllers
                         {
                             Roles = roles,
                             Email = user.Email,
-                            EnumeratorCode = user.EnumeratorCode,
+                            LibraryIdentificationNumber = user.LibraryIdentificationNumber,
                             LastName = user.LastName,
                             FirstName = user.FirstName,
-                            Companies = companies,
-                            Countries = countries,
-                            Produces = produces,
-                            Programmes = programmes,
                             UserId = user.Id
                         }
                     };
@@ -91,12 +83,6 @@ namespace WebAPI.Controllers
                     Response.Headers.Add("Access-Control-Expose-Headers", "Token,TokenExpiry");
                     return Ok(tokenResponse);
                 }
-                /*var isDataCollector = await _userManager.IsInRoleAsync(new User { Id = user.Id }, Constants.DataCollectorRole);
-                if (!isDataCollector)
-                {
-                    
-                }
-                throw new BadGatewayException($"The user account {model.Email} has no access to the portal");*/
             }
             var response = new BaseResponse
             {
@@ -107,7 +93,7 @@ namespace WebAPI.Controllers
         }
 
 
-        [HttpPost("forgotpassword")]
+        /*[HttpPost("forgotpassword")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(BaseResponse))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(ValidationResultModel))]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordViewModel model)
@@ -194,6 +180,6 @@ namespace WebAPI.Controllers
                 }
             }
             throw new NotFoundException("The user account does not exist");
-        }
+        }*/
     }
 }

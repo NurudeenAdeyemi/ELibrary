@@ -1,4 +1,5 @@
 ﻿using Domain.DTOs;
+using Domain.Interfaces.Identity;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Models;
@@ -14,11 +15,13 @@ namespace Persistence.Services
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository _userRepository; 
+        private readonly IUserRepository _userRepository;
+        private readonly IIdentityService _identityService;
 
-        public UserService(IUserRepository userRePository)
+        public UserService(IUserRepository userRePository, IIdentityService identityService)
         {
             _userRepository = userRePository;
+            _identityService = identityService;
         }
         public async Task<BaseResponse> AddUser(CreateUserRequestModel model)
         {
@@ -29,14 +32,15 @@ namespace Persistence.Services
                 Country = model.Country,
                 PhoneNumber = model.PhoneNumber,
                 Email = model.Email,
-                Status = model.Status,
+                Status = Domain.Enums.AccountStatus.ACTIVE,
                 University = model.University,
                 UserType = model.UserType,
-                PasswordHash = model.Password,
-                LibrarianIdentificationNumber = model.LibrarianIdentificationNumber,
-                LibraryIdentificationNumber = model.LibraryIdentificationNumber,
+                HashSalt = Guid.NewGuid().ToString(),
+                LibrarianIdentificationNumber = Guid.NewGuid().ToString(),
+                LibraryIdentificationNumber = Guid.NewGuid().ToString(),
 
             };
+            user.PasswordHash = _identityService.GetPasswordHash(model.Password, user.HashSalt);
 
             var roles = await _userRepository.GetSelectedRoles(model.Roles);
             foreach(var role in roles)

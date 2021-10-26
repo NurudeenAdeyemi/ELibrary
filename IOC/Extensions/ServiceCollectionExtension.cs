@@ -1,10 +1,14 @@
 ﻿
+using Domain.Interfaces.Identity;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
+using Domain.Models;
 using Domain.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Context;
+using Persistence.Identity;
 using Persistence.Repositories;
 using Persistence.Services;
 using System;
@@ -29,6 +33,8 @@ namespace IOC.Extensions
             services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoleService, RoleService>();
 
             return services;
         }
@@ -38,7 +44,21 @@ namespace IOC.Extensions
             services.AddScoped<IAuthorRepository, AuthorRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
 
+            return services;
+        }
+
+        public static IServiceCollection AddCustomIdentity(this IServiceCollection services)
+        {
+            services.AddScoped<IUserStore<User>, UserStore>();
+            services.AddScoped<IRoleStore<Role>, RoleStore>();
+            services.AddIdentity<User, Role>()
+                .AddDefaultTokenProviders();
+            services.AddScoped<IIdentityService, IdentityService>();
+            /* services.AddScoped<IEmailService, EmailService>();
+             services.AddScoped<IMailSender, MailSender>();*/
             return services;
         }
     }
