@@ -49,6 +49,14 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+        [Route("{id}")]
+        [HttpGet]
+        public async Task<IActionResult> GetUser([FromRoute] int id)
+        {
+            var response = await _userService.GetUser(id);
+            return Ok(response);
+        }
+
         [HttpPost("token")]
         //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(LoginResponseModel))]
         //[ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(ValidationResultModel))]

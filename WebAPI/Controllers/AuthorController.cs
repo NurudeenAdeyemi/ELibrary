@@ -1,5 +1,6 @@
 ﻿using Domain.Interfaces.Services;
 using Domain.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class AuthorController : ControllerBase
@@ -21,14 +23,15 @@ namespace WebAPI.Controllers
             
         }
 
+        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateAuthorRequestModel model)
+        public async Task<IActionResult> Create([FromForm] CreateAuthorRequestModel model)
         {
             var response = await _authorService.AddAuthor(model);
             return Ok(response);
         }
 
-
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAuthor([FromRoute] int id)
         {

@@ -106,7 +106,6 @@ namespace WebAPI
                 endpoints.MapControllers();
             });
 
-
         }
     }
 }

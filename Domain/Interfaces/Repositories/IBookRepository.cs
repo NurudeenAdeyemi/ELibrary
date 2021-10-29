@@ -15,7 +15,7 @@ namespace Domain.Interfaces.Repositories
     {
         Task<Book> GetBookByTitle(string title);
 
-        Task<IList<BookDTO>> GetBooksByPublicationDate(DateTime publicationDate);
+        Task<IList<BookDTO>> GetBooksByPublicationDate(int publicationDate);
 
         Task<IList<BookDTO>> GetBooksByPublisher(string publisher);
 
