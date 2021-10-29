@@ -17,7 +17,7 @@ namespace Domain.DTOs
 
         public string Biography { get; set; }
 
-        public List<BookAuthor> BookAuthors { get; set; } = new List<BookAuthor>();
+        
     }
 
     

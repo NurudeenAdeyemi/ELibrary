@@ -1,5 +1,6 @@
 ﻿using Domain.DTOs;
 using Domain.Enums;
+using Domain.Exceptions;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Models;
@@ -27,6 +28,13 @@ namespace Persistence.Services
 
         public async Task<BaseResponse> AddBook(CreateBookRequestModel model)
         {
+
+            var bookExist = await _bookRepository.ExistsAsync(b => b.Title == model.Title);
+
+            if (bookExist)
+            {
+                throw new BadRequestException($"Book with {model.Title} already exist");
+            }
             var book = new Book
 
             {
@@ -98,6 +106,10 @@ namespace Persistence.Services
         {
             var book = await _bookRepository.GetAsync(id);
 
+            if (book == null)
+            {
+                throw new NotFoundException($"Book with id {id} not found");
+            }
             return new BookResponseModel
             {
                 Data = new BookDTO
@@ -140,6 +152,10 @@ namespace Persistence.Services
         {
             var book = await _bookRepository.GetBookByTitle(title);
 
+            if (book == null)
+            {
+                throw new NotFoundException($"Book with title {title} not found");
+            }
             return new BookResponseModel
             {
                 Data = new BookDTO
@@ -167,14 +183,23 @@ namespace Persistence.Services
                         Id = a.CategoryId,
                         Name = a.Category.Name,
                     }).ToList()
-                }
-                
+
+                },
+                Status = true,
+                Message = "Book retrieved successfully"
+         
             };
+            
         }
 
         public async Task<BooksResponseModel> GetBooks()
         {
-            var books = await _bookRepository.Query().Select(b => new BookDTO
+            var books = await _bookRepository.Query()
+                .Include(b => b.BookCategories)
+                .ThenInclude(c => c.Category)
+                .Include(ba => ba.BookAuthors)
+                .ThenInclude(a => a.Author)
+                .Select(b => new BookDTO
             {
                 Id = b.Id,
                 Title = b.Title,
@@ -191,6 +216,7 @@ namespace Persistence.Services
                 PublicationDate = b.PublicationDate,
                 Authors = b.BookAuthors.Select(a => new AuthorDTO()
                 {
+                    Id = a.Author.Id,
                     FirstName = a.Author.FirstName,
                     LastName = a.Author.LastName,
                     Biography = a.Author.Biography
@@ -228,6 +254,10 @@ namespace Persistence.Services
         {
             var books = await _bookRepository.GetBooksByAuthor(authorId);
 
+            if (books.Count == 0)
+            {
+                throw new NotFoundException($"Book with author id {authorId} not found");
+            }
             return new BooksResponseModel
             {
                 Data = books,
@@ -254,6 +284,10 @@ namespace Persistence.Services
         {
             var books = await _bookRepository.GetBooksByCategory(categoryId);
 
+            if (books.Count == 0)
+            {
+                throw new NotFoundException($"Book with category id {categoryId} not found");
+            }
             return new BooksResponseModel
             {
                 Data = books,
@@ -263,10 +297,14 @@ namespace Persistence.Services
             };
         }
 
-        public async Task<BooksResponseModel> GetBooksByPublicationDate(DateTime publicationDate)
+        public async Task<BooksResponseModel> GetBooksByPublicationDate(int publicationDate)
         {
             var books = await _bookRepository.GetBooksByPublicationDate(publicationDate);
 
+            if (books.Count == 0)
+            {
+                throw new NotFoundException($"Book with publication year {publicationDate} not found");
+            }
             return new BooksResponseModel
             {
                 Data = books,
@@ -280,6 +318,10 @@ namespace Persistence.Services
         {
             var books = await _bookRepository.GetBooksByPublisher(publisher);
 
+            if (books.Count == 0)
+            {
+                throw new NotFoundException($"Books published by {publisher} not found");
+            }
             return new BooksResponseModel
             {
                 Data = books,
@@ -292,6 +334,11 @@ namespace Persistence.Services
         public async Task<BaseResponse> UpdateBook(int id, UpdateBookRequestModel model)
         {
             var book = await _bookRepository.GetAsync(id);
+
+            if (book == null)
+            {
+                throw new NotFoundException($"Book with id {id} not found");
+            }
 
             book.Price = model.Price;
             book.BookImage = model.BookImage;

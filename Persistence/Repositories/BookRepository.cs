@@ -72,7 +72,7 @@ namespace Persistence.Repositories
                 .ThenInclude(b => b.Author)
                 .Include(b => b.BookCategories)
                 .ThenInclude(b => b.Category)
-                .Where(b => b.BookAuthors.All(a => a.AuthorId == authorId)).Select(b => new BookDTO
+                .Where(b => b.BookAuthors.Any(a => a.AuthorId == authorId)).Select(b => new BookDTO
                 {
                     Id = b.Id,
                     Title = b.Title,
@@ -146,7 +146,7 @@ namespace Persistence.Repositories
                 .ThenInclude(b => b.Author)
                 .Include(b => b.BookCategories)
                 .ThenInclude(b => b.Category)
-                .Where(b => b.BookCategories.All(c => c.CategoryId == categoryId)).Select(b => new BookDTO
+                .Where(b => b.BookCategories.Any(c => c.CategoryId == categoryId)).Select(b => new BookDTO
                 {
                     Id = b.Id,
                     Title = b.Title,
@@ -163,6 +163,7 @@ namespace Persistence.Repositories
                     PublicationDate = b.PublicationDate,
                     Authors = b.BookAuthors.Select(a => new AuthorDTO()
                     {
+                        Id = a.Id,
                         FirstName = a.Author.FirstName,
                         LastName = a.Author.LastName,
                         Biography = a.Author.Biography
@@ -176,14 +177,14 @@ namespace Persistence.Repositories
                 }).ToListAsync();
         }
 
-        public async Task<IList<BookDTO>> GetBooksByPublicationDate(DateTime publicationDate)
+        public async Task<IList<BookDTO>> GetBooksByPublicationDate(int publicationDate)
         {
             return await _context.Books
                 .Include(b => b.BookAuthors)
                 .ThenInclude(b => b.Author)
                 .Include(b => b.BookCategories)
                 .ThenInclude(b => b.Category)
-                .Where(b => b.PublicationDate == publicationDate).Select(b => new BookDTO
+                .Where(b => b.PublicationDate.Year == publicationDate).Select(b => new BookDTO
                 {
                     Id = b.Id,
                     Title = b.Title,

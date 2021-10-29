@@ -1,9 +1,6 @@
 ﻿using Domain.Enums;
 using Domain.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.Interfaces.Services
@@ -26,7 +23,7 @@ namespace Domain.Interfaces.Services
 
         public Task<BooksResponseModel> GetBooksByPublisher(string publisher);
 
-        public Task<BooksResponseModel> GetBooksByPublicationDate(DateTime publicationDate);
+        public Task<BooksResponseModel> GetBooksByPublicationDate(int publicationDate);
 
         public Task<BooksResponseModel> GetBooksByAvailabilityStatus(BookAvailabilityStatus availabilityStatus);
 

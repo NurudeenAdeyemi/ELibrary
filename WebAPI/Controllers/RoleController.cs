@@ -2,12 +2,9 @@
 using Domain.Interfaces.Services;
 using Domain.Models;
 using Domain.ViewModels;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
@@ -39,7 +36,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        //[Authorize(Roles = "IDHAdmin")]
+        [Authorize]
         [HttpGet("{id}")]
        // [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RoleResponseModel))]
        // [ProducesResponseType((int)HttpStatusCode.Unauthorized, Type = typeof(BaseResponse))]

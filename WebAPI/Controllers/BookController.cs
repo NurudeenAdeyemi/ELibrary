@@ -1,11 +1,6 @@
-﻿using Domain.Enums;
-using Domain.Interfaces.Services;
+﻿using Domain.Interfaces.Services;
 using Domain.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
@@ -29,12 +24,16 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        /*[HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBook([FromRoute] int id, UpdateBookRequestModel model)
+        /*[Route("updatebook/{id, model}")]*/
+        /*[Route("{id}")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateBook([FromQuery] int id, UpdateBookRequestModel model)
         {
             var response = await _bookService.UpdateBook(id, model);
             return Ok(response);
         }*/
+
+
         [Route("{id}")]
         [HttpPut]
         public async Task<IActionResult> DeleteBook([FromRoute] int id)
@@ -59,42 +58,49 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+        [Route("booktitle/{title}")]
         [HttpGet]
-        public async Task<IActionResult> GetBookByTitle([FromBody] string title)
+        public async Task<IActionResult> GetBookByTitle([FromRoute] string title)
         {
             var response = await _bookService.GetBookByTitle(title);
             return Ok(response);
         }
 
-        /*[HttpGet]
-        public async Task<IActionResult> GetBookByPublicationDate([FromBody] DateTime publicationDate)
+        [Route("pubdate/{publicationDate}")]
+        [HttpGet]
+        public async Task<IActionResult> GetBookByPublicationDate([FromRoute] int publicationDate)
         {
             var response = await _bookService.GetBooksByPublicationDate(publicationDate);
             return Ok(response);
         }
 
+        [Route("category/{categoryId}")]
         [HttpGet]
-        public async Task<IActionResult> GetBookByPublisher([FromBody] string publisher)
-        {
-            var response = await _bookService.GetBooksByPublisher(publisher);
-            return Ok(response);
-        }
-
-        [HttpGet("{id}")]
         public async Task<IActionResult> GetBooksByCategory([FromRoute] int categoryId)
         {
             var response = await _bookService.GetBooksByCategory(categoryId);
             return Ok(response);
         }
 
-        [HttpGet("{id}")]
+        [Route("bookpublisher/{publisher}")]
+        [HttpGet]
+        public async Task<IActionResult> GetBookByPublisher([FromRoute] string publisher)
+        {
+            var response = await _bookService.GetBooksByPublisher(publisher);
+            return Ok(response);
+        }
+
+
+
+        [Route("author/{authorId}")]
+        [HttpGet]
         public async Task<IActionResult> GetBooksByAuthor([FromRoute] int authorId)
         {
             var response = await _bookService.GetBooksByAuthor(authorId);
             return Ok(response);
         }
 
-        [HttpGet]
+        /*[HttpGet]
         public async Task<IActionResult> GetBookByAvailabilityStatus([FromBody] BookAvailabilityStatus availabilityStatus)
         {
             var response = await _bookService.GetBooksByAvailabilityStatus(availabilityStatus);

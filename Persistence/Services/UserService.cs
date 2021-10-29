@@ -1,4 +1,5 @@
 ﻿using Domain.DTOs;
+using Domain.Enums;
 using Domain.Interfaces.Identity;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
@@ -32,7 +33,7 @@ namespace Persistence.Services
                 Country = model.Country,
                 PhoneNumber = model.PhoneNumber,
                 Email = model.Email,
-                Status = Domain.Enums.AccountStatus.ACTIVE,
+                Status = AccountStatus.ACTIVE,
                 University = model.University,
                 UserType = model.UserType,
                 HashSalt = Guid.NewGuid().ToString(),
