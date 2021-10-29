@@ -36,7 +36,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [Authorize]
+       // [Authorize]
         [HttpGet("{id}")]
        // [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RoleResponseModel))]
        // [ProducesResponseType((int)HttpStatusCode.Unauthorized, Type = typeof(BaseResponse))]

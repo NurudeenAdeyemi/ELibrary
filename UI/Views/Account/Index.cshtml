@@ -46,44 +46,7 @@
                     </nav><!-- .courses-menu -->
                 </header><!-- .heading -->
             </div><!-- .col -->
-            @foreach (var book in Model)
-            {
-                <div class="col-12 col-md-6 col-lg-4 px-25">
-                    <div class="course-content">
-                        <figure class="course-thumbnail">
-                            <a asp-action="Details" asp-controller="Book" asp-route-id="@book.Id" ><img src="~/bookImages/@book.BookImage" style="height:200px; width:100%" alt="Image"></a>
-                        </figure><!-- .course-thumbnail -->
-
-                        <div class="course-content-wrap">
-                            <header class="entry-header">
-                                <h2 class="entry-title justify-content-sm-around"><a asp-action="Details" asp-controller="Book" asp-route-id="@book.Id">@book.Title</a></h2>
-
-                                <div class="entry-meta flex align-items-center">
-                                    <div class="course-author"><a asp-action="Details" asp-controller="Book" asp-route-id="@book.Id">@book.Authors.First().FirstName</a></div>
-
-                                    <div class="course-date">@book.PublicationDate.Year</div>
-                                </div><!-- .course-date -->
-                            </header><!-- .entry-header -->
-
-                            <footer class="entry-footer flex justify-content-between align-items-center">
-                                <div class="course-cost">
-                                    &#8358 @book.Price
-                                </div><!-- .course-cost -->
-
-                                <div class="course-ratings flex justify-content-end align-items-center">
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star-o"></span>
-
-                                    <span class="course-ratings-count">(4 votes)</span>
-                                </div><!-- .course-ratings -->
-                            </footer><!-- .entry-footer -->
-                        </div><!-- .course-content-wrap -->
-                    </div><!-- .course-content -->
-                </div>
-            }
+          
             <!-- .col -->
             <div class="col-12 px-25 flex justify-content-center">
                 <a class="btn" href="#">view all courses</a>
