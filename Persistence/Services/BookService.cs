@@ -89,6 +89,33 @@ namespace Persistence.Services
             };
         }
 
+        public int BooksBorrowed(int userId)
+        {
+            return _bookRepository.NumberOfBooksBorrowed(userId);
+        }
+
+        public async Task<BaseResponse> CheckOutBook(CheckOutBookRequestModel model)
+        {
+            if ( _bookRepository.NumberOfBooksBorrowed(model.UserId) >= 2)
+            {
+                throw new BadRequestException($"Books Limit reached");
+            }
+            var bookLending = new BookLending
+            {
+                UserId = model.UserId,
+                BookId = model.BookId,
+                DueDate = DateTime.Today.AddDays(5)
+            };
+            await _bookRepository.CheckoutBookItem(bookLending);
+
+            return new BaseResponse
+            {
+                
+                Status = true,
+                Message = "Book borrowed successfully"
+            };
+        }
+
         public async Task<BaseResponse> DeleteBook(int id)
         {
             var book = await _bookRepository.GetAsync(id);
@@ -234,6 +261,19 @@ namespace Persistence.Services
                 Data = books,
                 Status = true,
                 Message = "Books retrieved successfully"
+            };
+        }
+
+        public async Task<BooksResponseModel> GetBooksBorrowed(int userId)
+        {
+            var books = await _bookRepository.GetListOfBooks(userId);
+
+            return new BooksResponseModel
+            {
+                Data = books,
+                Status = true,
+                Message = "Books retrieved successfully"
+
             };
         }
 

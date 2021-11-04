@@ -30,5 +30,12 @@ namespace Domain.Interfaces.Services
         public Task<BooksResponseModel> GetBooksByAccessibilityStatus(BookAccessibilityStatus accessibilityStatus);
 
         public Task<BooksResponseModel> GetBooks();
+
+        public Task<BaseResponse> CheckOutBook(CheckOutBookRequestModel model);
+
+        int BooksBorrowed(int userId);
+
+        public Task<BooksResponseModel> GetBooksBorrowed(int userId);
+
     }
 }

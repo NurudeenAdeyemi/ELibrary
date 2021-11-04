@@ -18,6 +18,14 @@ namespace Persistence.Repositories
         {
             _context = context;
         }
+
+        public async Task<BookLending> CheckoutBookItem(BookLending bookLending)
+        {
+            await _context.BookLendings.AddAsync(bookLending);
+            await _context.SaveChangesAsync();
+            return bookLending;
+        }
+
         public async Task<Book> GetBookByTitle(string title)
         {
             return await _context.Books
@@ -249,6 +257,46 @@ namespace Persistence.Repositories
                      }).ToList()
 
                  }).ToListAsync();
+        }
+
+        public async Task<IList<BookDTO>> GetListOfBooks(int userId)
+        {
+            return await _context.BookLendings
+                .Include(b => b.Book)
+                 .Where(b => b.UserId == userId).Select(b => new BookDTO
+                 {
+                     Id = b.Id,
+                     Title = b.Book.Title,
+                     ISBN = b.Book.ISBN,
+                     Subject = b.Book.Subject,
+                     BookPDF = b.Book.BookPDF,
+                     Language = b.Book.Language,
+                     BookImage = b.Book.BookImage,
+                     NumberOfPages = b.Book.NumberOfPages,
+                     Price = b.Book.Price,
+                     AccessibilityStatus = b.Book.AccessibilityStatus,
+                     AvailabilityStatus = b.Book.AvailabilityStatus,
+                     Publisher = b.Book.Publisher,
+                     PublicationDate = b.Book.PublicationDate,
+                    /* Authors = b.Book.BookAuthors.Select(a => new AuthorDTO()
+                     {
+                         FirstName = a.Author.FirstName,
+                         LastName = a.Author.LastName,
+                         Biography = a.Author.Biography
+                     }).ToList(),
+                     BookCategories = b.BookCategories.Select(a => new CategoryDTO()
+                     {
+                         Id = a.CategoryId,
+                         Name = a.Category.Name,
+                     }).ToList()*/
+
+                 }).ToListAsync();
+        }
+
+        public int NumberOfBooksBorrowed(int userId)
+        {
+            return _context.BookLendings
+                .Where(b => b.UserId == userId).Count();
         }
     }
 }

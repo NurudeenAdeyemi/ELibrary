@@ -23,15 +23,15 @@ namespace WebAPI.Controllers
             
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] CreateAuthorRequestModel model)
+        public async Task<IActionResult> Create([FromBody] CreateAuthorRequestModel model)
         {
             var response = await _authorService.AddAuthor(model);
             return Ok(response);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAuthor([FromRoute] int id)
         {

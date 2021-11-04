@@ -24,6 +24,14 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+        [Route("CheckOutBook")]
+        [HttpPost]
+        public async Task<IActionResult> CheckOutBook([FromBody] CheckOutBookRequestModel model)
+        {
+            var response = await _bookService.CheckOutBook(model);
+            return Ok(response);
+        }
+
         /*[Route("updatebook/{id, model}")]*/
         /*[Route("{id}")]
         [HttpPut]
@@ -97,6 +105,14 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetBooksByAuthor([FromRoute] int authorId)
         {
             var response = await _bookService.GetBooksByAuthor(authorId);
+            return Ok(response);
+        }
+
+        [Route("user/{userId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetBooksBorrowed([FromRoute] int userId)
+        {
+            var response = await _bookService.GetBooksBorrowed(userId);
             return Ok(response);
         }
 

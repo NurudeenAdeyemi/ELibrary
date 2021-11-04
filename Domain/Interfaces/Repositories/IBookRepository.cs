@@ -26,5 +26,11 @@ namespace Domain.Interfaces.Repositories
         Task<IList<BookDTO>> GetBooksByAvailabilityStatus(BookAvailabilityStatus availabilityStatus);
 
         Task<IList<BookDTO>> GetBooksByAccessibilityStatus(BookAccessibilityStatus accessibilityStatus);
+
+        Task<BookLending> CheckoutBookItem(BookLending bookLending);
+
+        int NumberOfBooksBorrowed(int userId);
+
+        Task<IList<BookDTO>> GetListOfBooks(int userId);
     }
 }
