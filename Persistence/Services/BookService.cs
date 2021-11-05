@@ -19,11 +19,13 @@ namespace Persistence.Services
         private readonly IBookRepository _bookRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IAuthorRepository _authorRepository;
-        public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, ICategoryRepository categoryRepository)
+        private readonly IUserRepository _userRepository;
+        public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, ICategoryRepository categoryRepository, IUserRepository userRepository)
         {
             _bookRepository = bookRepository;
             _authorRepository = authorRepository;
             _categoryRepository = categoryRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<BaseResponse> AddBook(CreateBookRequestModel model)
@@ -96,14 +98,38 @@ namespace Persistence.Services
 
         public async Task<BaseResponse> CheckOutBook(CheckOutBookRequestModel model)
         {
-            if ( _bookRepository.NumberOfBooksBorrowed(model.UserId) >= 2)
+            var user = await _userRepository.GetAsync(model.UserId);
+            if (user == null)
+            {
+                throw new NotFoundException($"user with {model.UserId} does not exist");
+            }
+            var book = await _bookRepository.GetAsync(model.BookId);
+            if (book == null)
+            {
+                throw new NotFoundException($"book with Id: {model.BookId} does not exist");
+            }
+            var userBorrowedBooks = await _bookRepository.GetListOfBooks(user.Id);
+            var bookBorrowedExist = userBorrowedBooks.Any(p => p.Id == book.Id);
+            if (bookBorrowedExist)
+            {
+                throw new BadRequestException($"Book with title: {book.Title} already borrowed by user");
+            }
+            if ( _bookRepository.NumberOfBooksBorrowed(user.Id) >= 5)
             {
                 throw new BadRequestException($"Books Limit reached");
             }
+            if (book.AvailabilityStatus != BookAvailabilityStatus.AVAILABLE)
+            {
+                throw new BadRequestException($"Book with title: {book.Title} is not available");
+            }
+            if (book.AccessibilityStatus != BookAccessibilityStatus.FREE)
+            {
+                throw new BadRequestException($"Book with title: {book.Title} is not free");
+            }
             var bookLending = new BookLending
             {
-                UserId = model.UserId,
-                BookId = model.BookId,
+                UserId = user.Id,
+                BookId = book.Id,
                 DueDate = DateTime.Today.AddDays(5)
             };
             await _bookRepository.CheckoutBookItem(bookLending);
@@ -112,7 +138,7 @@ namespace Persistence.Services
             {
                 
                 Status = true,
-                Message = "Book borrowed successfully"
+                Message = $"Book with title: {book.Title} borrowed successfully"
             };
         }
 
