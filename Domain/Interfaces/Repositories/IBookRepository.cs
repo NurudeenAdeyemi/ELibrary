@@ -29,8 +29,12 @@ namespace Domain.Interfaces.Repositories
 
         Task<BookLending> CheckoutBookItem(BookLending bookLending);
 
-        int NumberOfBooksBorrowed(int userId);
+        BookLending ReturnBookItem(BookLending bookLending);
 
-        Task<IList<BookDTO>> GetListOfBooks(int userId);
+        int NumberOfBooksBorrowed(int userId, bool bookReturned);
+
+        Task<IList<BookDTO>> GetListOfBooks(int userId, bool bookReturned);
+
+        Task<BookLending> GetBookBorrowed(int bookId, int userId, bool bookReturned);
     }
 }

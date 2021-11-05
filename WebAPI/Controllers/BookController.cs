@@ -32,6 +32,14 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+        [Route("ReturnBook")]
+        [HttpPut]
+        public async Task<IActionResult> ReturnBook([FromBody] ReturnBookRequestModel model)
+        {
+            var response = await _bookService.ReturnBook(model);
+            return Ok(response);
+        }
+
         /*[Route("updatebook/{id, model}")]*/
         /*[Route("{id}")]
         [HttpPut]

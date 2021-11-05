@@ -13,6 +13,17 @@ namespace Domain.ViewModels
         public int UserId { get; set; }
 
         public int BookId { get; set; }
+
+        public bool ReturnedBook = false;
+    }
+
+    public class ReturnBookRequestModel
+    {
+        public int UserId { get; set; }
+
+        public int BookId { get; set; }
+
+        public bool ReturnedBook = false;
     }
 
     public class BooklendingResponseModel : BaseResponse

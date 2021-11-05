@@ -33,7 +33,9 @@ namespace Domain.Interfaces.Services
 
         public Task<BaseResponse> CheckOutBook(CheckOutBookRequestModel model);
 
-        int BooksBorrowed(int userId);
+        public Task<BaseResponse> ReturnBook(ReturnBookRequestModel model);
+
+        int BooksBorrowed(int userId, bool bookReturned);
 
         public Task<BooksResponseModel> GetBooksBorrowed(int userId);
 

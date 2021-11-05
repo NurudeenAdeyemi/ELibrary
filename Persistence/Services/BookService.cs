@@ -91,41 +91,51 @@ namespace Persistence.Services
             };
         }
 
-        public int BooksBorrowed(int userId)
+        public int BooksBorrowed(int userId, bool bookReturned = false)
         {
-            return _bookRepository.NumberOfBooksBorrowed(userId);
+            return _bookRepository.NumberOfBooksBorrowed(userId, bookReturned);
         }
 
         public async Task<BaseResponse> CheckOutBook(CheckOutBookRequestModel model)
         {
             var user = await _userRepository.GetAsync(model.UserId);
+
             if (user == null)
             {
-                throw new NotFoundException($"user with {model.UserId} does not exist");
+                throw new NotFoundException($"User with id {model.UserId} does not exist");
             }
+
             var book = await _bookRepository.GetAsync(model.BookId);
-            if (book == null)
+            if ( book == null)
             {
-                throw new NotFoundException($"book with Id: {model.BookId} does not exist");
+                throw new NotFoundException($"Book with id {model.BookId} does not exist");
             }
-            var userBorrowedBooks = await _bookRepository.GetListOfBooks(user.Id);
-            var bookBorrowedExist = userBorrowedBooks.Any(p => p.Id == book.Id);
-            if (bookBorrowedExist)
+            if ( _bookRepository.NumberOfBooksBorrowed(user.Id, model.ReturnedBook) >= 5)
             {
-                throw new BadRequestException($"Book with title: {book.Title} already borrowed by user");
+                throw new BadRequestException($"Books Limit reached by user {user.LastName} {user.FirstName}");
             }
-            if ( _bookRepository.NumberOfBooksBorrowed(user.Id) >= 5)
+
+            var booksBorrowedByUser = await _bookRepository.GetListOfBooks(user.Id, model.ReturnedBook);
+
+            var bookToBeBorrowed = booksBorrowedByUser.Any(b => b.Id == book.Id);
+
+            if (bookToBeBorrowed)
             {
-                throw new BadRequestException($"Books Limit reached");
+                throw new BadRequestException($"Book with title {book.Title} is already borrowed by {user.LastName} {user.FirstName}");
             }
-            if (book.AvailabilityStatus != BookAvailabilityStatus.AVAILABLE)
+
+            if (book.AccessibilityStatus == BookAccessibilityStatus.NOTFREE)
             {
-                throw new BadRequestException($"Book with title: {book.Title} is not available");
+                throw new BadRequestException($"Book with title {book.Title} cannot be borrowed because it is NOT FREE");
             }
-            if (book.AccessibilityStatus != BookAccessibilityStatus.FREE)
+
+            if (book.AvailabilityStatus == BookAvailabilityStatus.UNAVAILABLE)
             {
-                throw new BadRequestException($"Book with title: {book.Title} is not free");
+                throw new BadRequestException($"Book with title {book.Title} cannot be borrowed because it is NOT AVAILABLE");
             }
+
+
+            
             var bookLending = new BookLending
             {
                 UserId = user.Id,
@@ -138,7 +148,7 @@ namespace Persistence.Services
             {
                 
                 Status = true,
-                Message = $"Book with title: {book.Title} borrowed successfully"
+                Message = $"Book with title: {book.Title} borrowed by {user.FirstName} {user.LastName} successfully. Total number of books borrowed by the user is {_bookRepository.NumberOfBooksBorrowed(user.Id, model.ReturnedBook)}"
             };
         }
 
@@ -292,7 +302,8 @@ namespace Persistence.Services
 
         public async Task<BooksResponseModel> GetBooksBorrowed(int userId)
         {
-            var books = await _bookRepository.GetListOfBooks(userId);
+            bool bookReturned = false;
+            var books = await _bookRepository.GetListOfBooks(userId, bookReturned);
 
             return new BooksResponseModel
             {
@@ -394,6 +405,40 @@ namespace Persistence.Services
                 Status = true,
                 Message = "Books retrieved successfully"
 
+            };
+        }
+
+        public async Task<BaseResponse> ReturnBook(ReturnBookRequestModel model)
+        {
+            var user = await _userRepository.GetAsync(model.UserId);
+
+            if (user == null)
+            {
+                throw new NotFoundException($"User with id {model.UserId} does not exist");
+            }
+
+            var book = await _bookRepository.GetAsync(model.BookId);
+            if (book == null)
+            {
+                throw new NotFoundException($"Book with id {model.BookId} does not exist");
+            }
+
+
+            var bookToBeReturned = await _bookRepository.GetBookBorrowed(book.Id, user.Id, model.ReturnedBook);
+
+            if (bookToBeReturned == null)
+            {
+                throw new BadRequestException($"Book with title {book.Title} is not borrowed by {user.LastName} {user.FirstName}");
+            }
+
+            bookToBeReturned.ReturnDate = DateTime.Now;
+            bookToBeReturned.BookReturned = true;
+            _bookRepository.ReturnBookItem(bookToBeReturned);
+
+            return new BaseResponse
+            {
+                Status = true,
+                Message = $"Book with title: {book.Title} borrowed by {user.FirstName} {user.LastName} successfully returned. Total number of books borrowed by the user is {_bookRepository.NumberOfBooksBorrowed(user.Id, model.ReturnedBook)}"
             };
         }
 

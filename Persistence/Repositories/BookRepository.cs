@@ -26,6 +26,11 @@ namespace Persistence.Repositories
             return bookLending;
         }
 
+        public async Task<BookLending> GetBookBorrowed(int bookId, int userId, bool bookReturned = false)
+        {
+            return await _context.BookLendings.FirstOrDefaultAsync(b => b.BookId == bookId && b.UserId == userId && b.BookReturned == bookReturned);
+        }
+
         public async Task<Book> GetBookByTitle(string title)
         {
             return await _context.Books
@@ -259,13 +264,13 @@ namespace Persistence.Repositories
                  }).ToListAsync();
         }
 
-        public async Task<IList<BookDTO>> GetListOfBooks(int userId)
+        public async Task<IList<BookDTO>> GetListOfBooks(int userId, bool bookReturned = false)
         {
             return await _context.BookLendings
                 .Include(b => b.Book)
-                 .Where(b => b.UserId == userId).Select(b => new BookDTO
+                 .Where(b => b.UserId == userId && b.BookReturned == bookReturned).Select(b => new BookDTO
                  {
-                     Id = b.Id,
+                     Id = b.BookId,
                      Title = b.Book.Title,
                      ISBN = b.Book.ISBN,
                      Subject = b.Book.Subject,
@@ -293,10 +298,18 @@ namespace Persistence.Repositories
                  }).ToListAsync();
         }
 
-        public int NumberOfBooksBorrowed(int userId)
+        public int NumberOfBooksBorrowed(int userId, bool bookReturned = false)
         {
             return _context.BookLendings
-                .Where(b => b.UserId == userId).Count();
+                .Where(b => b.UserId == userId && b.BookReturned == bookReturned).Count();
+        }
+
+        public BookLending ReturnBookItem(BookLending bookLending)
+        {
+           
+            _context.BookLendings.Update(bookLending);
+            _context.SaveChanges();
+            return bookLending;
         }
     }
 }

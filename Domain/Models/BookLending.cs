@@ -14,5 +14,6 @@ namespace Domain.Models
         public Book Book { get; set; }
         public DateTime DueDate { get; set; }
         public DateTime? ReturnDate { get; set; }
+        public bool BookReturned { get; set; }
     }
 }
