@@ -81,7 +81,7 @@ namespace Persistence.Services
                 };
                 book.BookCategories.Add(bookCategory);
             }
-
+           
            await _bookRepository.AddAsync(book);
             await _authorRepository.SaveChangesAsync();
             return new BaseResponse
@@ -145,8 +145,7 @@ namespace Persistence.Services
             await _bookRepository.CheckoutBookItem(bookLending);
 
             return new BaseResponse
-            {
-                
+            {              
                 Status = true,
                 Message = $"Book with title: {book.Title} borrowed by {user.FirstName} {user.LastName} successfully. Total number of books borrowed by the user is {_bookRepository.NumberOfBooksBorrowed(user.Id, model.ReturnedBook)}"
             };

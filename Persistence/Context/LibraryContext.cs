@@ -21,6 +21,7 @@ namespace Persistence.Context
         {
             modelBuilder.ApplyAllConfigurations<LibraryContext>();
             modelBuilder.ConfigureDeletableEntities();
+            modelBuilder.Entity<Book>().Property(s => s.Title).IsRequired().HasColumnType("varchar");
         }
 
 
