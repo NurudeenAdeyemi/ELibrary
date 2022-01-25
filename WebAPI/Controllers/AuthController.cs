@@ -13,10 +13,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using WebAPI.Filters;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -39,9 +40,9 @@ namespace WebAPI.Controllers
 
      //   [Authorize(Roles = "")]
         [HttpPost("register")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(BaseResponse))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(ValidationResultModel))]
-        //[ProducesResponseType((int)HttpStatusCode.Unauthorized, Type = typeof(BaseResponse))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(BaseResponse))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(ValidationResultModel))]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized, Type = typeof(BaseResponse))]
         public async Task<IActionResult> Register([FromBody] CreateUserRequestModel model)
         {
 
@@ -58,8 +59,8 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("token")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(LoginResponseModel))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(ValidationResultModel))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(LoginResponseModel))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(ValidationResultModel))]
         public async Task<IActionResult> Token([FromBody] LoginRequestModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
@@ -79,7 +80,7 @@ namespace WebAPI.Controllers
                         {
                             Roles = roles,
                             Email = user.Email,
-                            LibraryIdentificationNumber = user.LibraryIdentificationNumber,
+                            LibraryIdentificationNumber = user.LibraryNumber,
                             LastName = user.LastName,
                             FirstName = user.FirstName,
                             UserId = user.Id
@@ -100,6 +101,14 @@ namespace WebAPI.Controllers
             return BadRequest(response);
         }
 
+        [HttpPost("verify")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(BaseResponse))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(ValidationResultModel))]
+        public async Task<IActionResult> VerifyEmail([FromRoute] VerifyEmailViewModel model)
+        {
+            var response = await _userService.VerifyEmail(model);
+            return Ok(response);
+        }
 
         /*[HttpPost("forgotpassword")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(BaseResponse))]

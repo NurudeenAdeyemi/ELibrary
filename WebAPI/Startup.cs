@@ -16,6 +16,14 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Domain.Configurations;
+using Domain.ViewModels;
+using ELibrary.Infrastructure.Persistence.Integrations.Paystack;
+using ELibrary.Infrastructure.Persistence.Integrations.Email;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using WebAPI.Filters;
+using WebAPI.ActionResults;
 
 namespace WebAPI
 {
@@ -31,13 +39,24 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<PaystackSettings>(Configuration.GetSection("Paystack"));
+            services.Configure<EmailConfiguration>(Configuration.GetSection("EmailConfiguration"));
             services.AddCors();
 
             services.AddDatabase(Configuration.GetConnectionString("LibraryDbContext"));
-            services.AddRepositories()
-               .AddServices()
-            .AddCustomIdentity();
-            services.AddControllers();
+            services.Configure<BookReturnConfig>(Configuration.GetSection("BookReturnConfig"));
+            services.AddFileExportService()
+            .AddRepositories()
+            .AddServices()
+            .AddCustomIdentity()
+            .AddBackgroundTasks()
+            .AddLogging();
+     
+            services.AddHttpClient<IPaystackService, PaystackService>()
+               .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
+          
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -57,6 +76,22 @@ namespace WebAPI
                 };
                 options.RequireHttpsMetadata = false;
             });
+            services.Configure<DataProtectionTokenProviderOptions>(o =>
+              o.TokenLifespan = TimeSpan.FromHours(3));
+            services.AddMvc(options =>
+            {
+                options.Filters.Add<RequestLoggingFilter>();
+                options.Filters.Add<HttpGlobalExceptionFilter>();
+            })
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context => new ValidationFailedResult(context.ModelState);
+                });
+            services.AddMemoryCache();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddControllers();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IMailSender, MailSender>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo

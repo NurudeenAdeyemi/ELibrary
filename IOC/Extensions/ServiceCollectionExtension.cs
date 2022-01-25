@@ -4,9 +4,12 @@ using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Models;
 using Domain.Repositories;
+using ELibrary.Infrastructure.Persistence.FileConfigurations.Services;
+using ELibrary.Infrastructure.Persistence.FileConfigurations.TemplateEngine;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Persistence.BackgroundTasks;
 using Persistence.Context;
 using Persistence.Identity;
 using Persistence.Repositories;
@@ -35,6 +38,7 @@ namespace IOC.Extensions
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IPaymentService, PaymentService>();
 
             return services;
         }
@@ -49,7 +53,14 @@ namespace IOC.Extensions
 
             return services;
         }
+        public static IServiceCollection AddFileExportService(this IServiceCollection services)
+        {
+            services.AddScoped<IRazorEngine, RazorEngine>();
+            services.AddScoped<IPdfExportService, PdfExportService>();
+            services.AddScoped<ICsvExportService, CsvExportService>();
+            return services;
 
+        }
         public static IServiceCollection AddCustomIdentity(this IServiceCollection services)
         {
             services.AddScoped<IUserStore<User>, UserStore>();
@@ -59,6 +70,14 @@ namespace IOC.Extensions
             services.AddScoped<IIdentityService, IdentityService>();
             /* services.AddScoped<IEmailService, EmailService>();
              services.AddScoped<IMailSender, MailSender>();*/
+            return services;
+        }
+
+        public static IServiceCollection AddBackgroundTasks(this IServiceCollection services)
+        {
+            
+            services.AddHostedService<BookReturn>();
+
             return services;
         }
     }

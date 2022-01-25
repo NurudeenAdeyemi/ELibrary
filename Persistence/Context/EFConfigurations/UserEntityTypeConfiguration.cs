@@ -24,6 +24,13 @@ namespace Persistence.Context.EFConfigurations
             builder.HasIndex(u => u.Email)
                 .IsUnique();
 
+            builder.Property(u => u.LibraryNumber)
+                .HasColumnType("varchar(50)")
+                .IsRequired();
+
+            builder.HasIndex(u => u.LibraryNumber)
+                .IsUnique();
+
             builder.HasMany(u => u.UserRoles)
                 .WithOne(u => u.User)
                 .HasForeignKey(u => u.UserId).OnDelete(DeleteBehavior.Restrict);

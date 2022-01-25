@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace WebAPI.Controllers
 {
     
-    [Route("api/[controller]")]
+    [Route("test/bookauthor")]
     [ApiController]
     public class AuthorController : ControllerBase
     {
@@ -39,6 +39,13 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+        [HttpGet("getname/{id}")]
+        public async Task<IActionResult> GetName([FromRoute] int id)
+        {
+            var response = await _authorService.GetAuthor(id);
+            return Ok(response);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAuthors()
         {
@@ -47,7 +54,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAuthor([FromRoute] int id,UpdateAuthorRequestModel model)
+        public async Task<IActionResult> UpdateAuthor([FromRoute] int id,[FromBody] UpdateAuthorRequestModel model)
         {
             var response = await _authorService.UpdateAuthor(id,model);
             return Ok(response);

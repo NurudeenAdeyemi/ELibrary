@@ -36,5 +36,7 @@ namespace Domain.Interfaces.Repositories
         Task<IList<BookDTO>> GetListOfBooks(int userId, bool bookReturned);
 
         Task<BookLending> GetBookBorrowed(int bookId, int userId, bool bookReturned);
+
+        Task<BookLending> GetBookLending(int bookLendingId);
     }
 }

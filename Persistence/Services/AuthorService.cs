@@ -4,6 +4,7 @@ using Domain.Interfaces.Services;
 using Domain.Models;
 using Domain.Repositories;
 using Domain.ViewModels;
+using ELibrary.Infrastructure.Persistence.Integrations.Email;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,10 +17,12 @@ namespace Persistence.Services
     public class AuthorService : IAuthorService
     {
         private readonly IAuthorRepository _authorRepository;
+        //private readonly IMailSender _mailSender;
 
         public AuthorService(IAuthorRepository authorRepository)
         {
             _authorRepository = authorRepository;
+            
         }
 
         public async Task<BaseResponse> AddAuthor(CreateAuthorRequestModel model)

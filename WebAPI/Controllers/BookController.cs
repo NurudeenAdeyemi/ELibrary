@@ -1,6 +1,7 @@
 ﻿using Domain.Interfaces.Services;
 using Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
@@ -10,10 +11,12 @@ namespace WebAPI.Controllers
     public class BookController : ControllerBase
     {
         private readonly IBookService _bookService;
+        private readonly IPaymentService _paymentService;
 
-        public BookController(IBookService bookService)
+        public BookController(IBookService bookService, IPaymentService paymentService)
         {
             _bookService = bookService;
+            _paymentService = paymentService;
         }
 
         [Route("AddBook")]
@@ -124,6 +127,15 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+        [Route("{checkout}")]
+        [HttpPost]
+       /* [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(Result))]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError, Type = typeof(BaseResponse))]*/
+        public async Task<IActionResult> Checkout([FromBody] Checkout request)
+        {
+            var response = await _paymentService.CheckoutAsync(request);
+            return Ok(response);
+        }
         /*[HttpGet]
         public async Task<IActionResult> GetBookByAvailabilityStatus([FromBody] BookAvailabilityStatus availabilityStatus)
         {

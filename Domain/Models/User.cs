@@ -22,9 +22,9 @@ namespace Domain.Models
 
         public string University { get; set; }
 
-        public string LibraryIdentificationNumber { get; set; }
+        public string LibraryNumber { get; set; }
 
-        public string LibrarianIdentificationNumber { get; set; }
+        public VerificationStatus VerificationStatus { get; set; }
 
         public AccountStatus Status { get; set; }
 

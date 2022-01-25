@@ -135,12 +135,13 @@ namespace Persistence.Services
             }
 
 
-            
+
             var bookLending = new BookLending
             {
                 UserId = user.Id,
                 BookId = book.Id,
-                DueDate = DateTime.Today.AddDays(5)
+                DueDate = DateTime.Today.AddMinutes(2)
+                //DueDate = DateTime.Today.AddDays(5)
             };
             await _bookRepository.CheckoutBookItem(bookLending);
 
@@ -150,6 +151,18 @@ namespace Persistence.Services
                 Status = true,
                 Message = $"Book with title: {book.Title} borrowed by {user.FirstName} {user.LastName} successfully. Total number of books borrowed by the user is {_bookRepository.NumberOfBooksBorrowed(user.Id, model.ReturnedBook)}"
             };
+        }
+
+        private async void ReturnDueBook(int bookLendingId)
+        {
+            var bookBorrowed = await _bookRepository.GetBookLending(bookLendingId);
+            var dueDate = bookBorrowed.DueDate;
+            if (dueDate == DateTime.Now)
+            {
+                bookBorrowed.BookReturned = true;
+                bookBorrowed.ReturnDate = DateTime.Now;
+            }
+            _bookRepository.ReturnBookItem(bookBorrowed);
         }
 
         public async Task<BaseResponse> DeleteBook(int id)

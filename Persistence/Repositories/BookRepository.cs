@@ -41,6 +41,11 @@ namespace Persistence.Repositories
                 .SingleOrDefaultAsync(c => c.Title == title);
         }
 
+        public async Task<BookLending> GetBookLending(int bookLendingId)
+        {
+            return await _context.BookLendings.SingleOrDefaultAsync(b => b.Id == bookLendingId);
+        }
+
         public async Task<IList<BookDTO>> GetBooksByAccessibilityStatus(BookAccessibilityStatus accessibilityStatus)
         {
             return await _context.Books

@@ -66,5 +66,9 @@ namespace Persistence.Context
 
         public DbSet<BookAuthor> BookAuthors { get; set; }
         public DbSet<BookLending> BookLendings { get; set; }
+        public DbSet<BookTransaction> BookTransactions { get; set; }
+        public DbSet<BookTransactionItem> BookTransactionItems { get; set; }
+
+        public DbSet<BookTransactionLog> BookTransactionLogs { get; set; }
     }
 }

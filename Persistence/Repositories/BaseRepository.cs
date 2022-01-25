@@ -63,8 +63,7 @@ namespace Persistence.Repositories
         public Task<T> UpdateAsync(T entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
-            return Task.FromResult(entity);
-            
+            return Task.FromResult(entity);   
         }
 
         public Task DeleteAsync(int id)

@@ -17,6 +17,12 @@ namespace Persistence.Repositories
             _context = context;
         }
 
+        public async Task<User> GetByEmail(string email)
+        {
+            return await _context.Users
+                .SingleOrDefaultAsync(c => c.Email == email);
+        }
+
         public async Task<IEnumerable<Role>> GetSelectedRoles(IList<int> ids)
         {
             return await _context.Roles

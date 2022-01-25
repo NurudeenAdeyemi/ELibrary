@@ -20,5 +20,7 @@ namespace Domain.Interfaces.Services
         public Task<BaseResponse> AddUser(CreateUserRequestModel model);
 
         public Task<BaseResponse> DeleteUser(int id);
+
+        public Task<BaseResponse> VerifyEmail(VerifyEmailViewModel model);
     }
 }
